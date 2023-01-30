@@ -3,7 +3,7 @@ const filename = process.argv[2];
 let programArray=[],couponArray=[]
 ,noOfDeg=0,amount=0.00,
 lowestDegree='',discount=0.00,couponApp='None',proMemberShip=0,
-subtotal=0.00,proDis=0.00,proFees=0.00,enrollFees=0.00;
+subtotal=0.00,proDis=0.00,proFees=0.00,enrollFees=0.00,low=0;
    
 
 fs.readFile(filename, "utf8", (err, data) => {
@@ -53,7 +53,7 @@ fs.readFile(filename, "utf8", (err, data) => {
             }
            
         }
-        else{
+        else if(programArray[i].program=='DIPLOMA'){
             if(proMemberShip==1){
                 proFees=200;
                 proDis+=(2500*Number(programArray[i].no)*0.01)
@@ -144,12 +144,9 @@ fs.readFile(filename, "utf8", (err, data) => {
         }
         return num;
     }
-    console.log(`SUB_TOTAL\u00A0${addZeroes(subtotal)}`)
-    console.log(`COUPON_DISCOUNT \u00A0${couponApp}\u00A0${addZeroes(discount)}`)
-    console.log(`TOTAL_PRO_DISCOUNT\u00A0${addZeroes(proDis)}`)
-    console.log(`PRO_MEMBERSHIP_FEE\u00A0${addZeroes(proFees)}`)
-    console.log(`ENROLLMENT_FEE\u00A0${addZeroes(enrollFees)}`)
-    console.log(`TOTAL\u00A0${addZeroes(amount)}`)
+    
+
+    console.log(`SUB_TOTAL\u00A0${addZeroes(subtotal)}\nCOUPON_DISCOUNT \u00A0${couponApp}\u00A0${addZeroes(discount)}\nTOTAL_PRO_DISCOUNT\u00A0${addZeroes(proDis)}\nPRO_MEMBERSHIP_FEE\u00A0${addZeroes(proFees)}\nENROLLMENT_FEE\u00A0${addZeroes(enrollFees)}\nTOTAL\u00A0${addZeroes(amount)}`);
     return
 
 })
