@@ -1,14 +1,17 @@
-const fs = require("fs")
-const { readFile, writeFile } = require('fs')
-const filename = process.argv[2]
+const fs = require('fs')
+const filename = process.argv[2];
+let programArray=[],couponArray=[]
+,noOfDeg=0,amount=0.00,
+lowestDegree='',discount=0.00,couponApp='None',proMemberShip=0,
+subtotal=0.00,proDis=0.00,proFees=0.00,enrollFees=0.00;
+   
 
-readFile('./sample_input/input1.txt', "utf8", (err, data) => {
+fs.readFile(filename, "utf8", (err, data) => {
     if(err){
         console.log(err);
         return
     }
-    let programArray=[],couponArray=[],noOfDeg=0,amount=0.00,lowestDegree='',discount=0.00,couponApp='',proMemberShip=0,subtotal=0.00,proDis=0.00,proFees=0.00,enrollFees=0.00;
-    let dataInput=data.split("\r\n");
+    let dataInput=data.split("\n");
     for(let i=0;i<dataInput.length;i++){
         if((/ADD_PROGRAMME/g).test(dataInput[i])){
             let int = dataInput[i].split(" ");
@@ -34,7 +37,7 @@ readFile('./sample_input/input1.txt', "utf8", (err, data) => {
             if(proMemberShip==1){
                 proFees=200;
                 proDis+=(3000*Number(programArray[i].no)*0.02)
-                amount+=(3000*Number(programArray[i].no))-(3000*Number(programArray[i].no)*0.02) 
+                amount+=(3000*Number(programArray[i].no))-(3000*Number(programArray[i].no)*0.02)
             }
             else{
                 amount+=3000*Number(programArray[i].no)
@@ -54,6 +57,7 @@ readFile('./sample_input/input1.txt', "utf8", (err, data) => {
             if(proMemberShip==1){
                 proFees=200;
                 proDis+=(2500*Number(programArray[i].no)*0.01)
+                low=(2500)-(2500*0.01)
                 amount+=(2500*Number(programArray[i].no))-(2500*Number(programArray[i].no)*0.01)
             }
             else{
@@ -61,7 +65,14 @@ readFile('./sample_input/input1.txt', "utf8", (err, data) => {
             }
         }
     }
-    subtotal=amount;
+    if(proMemberShip==1){
+        amount=amount+200;
+        subtotal=amount
+    }
+    else{
+        subtotal=amount;
+    }
+    
     function lowestDeg(){
         if(data.indexOf('DIPLOMA')!==-1){
             lowestDegree='DIPLOMA'
@@ -76,8 +87,15 @@ readFile('./sample_input/input1.txt', "utf8", (err, data) => {
     lowestDeg()
     if(noOfDeg>=4){
         if(lowestDegree=='DIPLOMA'){
-            amount-=2500;
-            discount=2500;
+            if(proMemberShip==1){
+                low=2500-(2500*0.01)
+                amount-=low;
+                discount=low;
+            }
+            else{
+                amount-=2500;
+                discount=2500;
+            }
         }
         else if(lowestDegree=='CERTIFICATION'){
             amount-=3000;
@@ -114,18 +132,24 @@ readFile('./sample_input/input1.txt', "utf8", (err, data) => {
         enrollFees=500;
         amount+=500
     }
-   console.log(`
-   SUB_TOTAL ${subtotal}
-   COUPON_DISCOUNT ${couponApp} ${discount}
-   TOTAL_PRO_DISCOUNT ${proDis}
-   PRO_MEMBERSHIP_FEE ${proFees}
-   ENROLLMENT_FEE ${enrollFees}
-   TOTAL ${amount}
-   `)
+    function addZeroes(num) {
+        //console.log(typeof num)
+        var num = Number(num);
+        if (isNaN(num)) {
+            return 0;
+        }
+        if (String(num).split(".").length < 2 || String(num).split(".")[1].length<=2 ){
+            num=Number(num);
+            num = num.toFixed(2);
+        }
+        return num;
+    }
+    console.log(`SUB_TOTAL\u00A0${addZeroes(subtotal)}`)
+    console.log(`COUPON_DISCOUNT \u00A0${couponApp}\u00A0${addZeroes(discount)}`)
+    console.log(`TOTAL_PRO_DISCOUNT\u00A0${addZeroes(proDis)}`)
+    console.log(`PRO_MEMBERSHIP_FEE\u00A0${addZeroes(proFees)}`)
+    console.log(`ENROLLMENT_FEE\u00A0${addZeroes(enrollFees)}`)
+    console.log(`TOTAL\u00A0${addZeroes(amount)}`)
     return
 
-    /*if (err) throw err
-    var inputLines = data.toString().split("\n")
-    // Add your code here to process input commands
-    */
 })
